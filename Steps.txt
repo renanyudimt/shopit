@@ -1,0 +1,68 @@
+1) Criacao do Back:
+mongod --port 27018
+
+  - executar npm init pra criar o package.json
+  - instalar o: nodemon, dotenv, mongoose, express
+  - criar o arquivo server.js
+  - criar os scripts no package.json
+  - crirar o arquivo de config.env e declarar as variaveis
+  - declarar no server.js o arquivo de environment que vou usar
+  - criar o listener 
+  - criar database connection
+  
+  - o app.js vai ser o arquivo que ira conter todas as rotas do back
+
+  - Criar models
+  - Criar Controllers
+  - Criar Routes
+  - Criar middlewares / utils
+
+  Como funciona a orgnaizacao dos arquivos no padrao MVC:
+    - server.js: e o arquivo principal, ira abrir a porta de conexao com tudo.
+    - app.js: pelo que entendi serve como intermediario entre routes.js e server.js, vai controlar o versionamento da API
+    - routes: vai ter todas as rotas para um determinado local
+    - models: vai criar o modelo do objeto 
+    - controller: criar as funcoes que vao envolver o modelo
+    - config: sao os arquivos de configuracao do banco, connection string e env file
+
+  Como funciona os middleware dentro do express:
+    - funcao use() vai receber um middleware, antes de entrar na rota, vai passar primeiro pelos middleware em ordem de declaracao
+      quando houver next(), irá pular para o proximo middleware.
+        - Um next() sozinho nao passara argumentos e vai pular pro proximo middlware, ao passar parametros pro next() como a classe de erro, eu consigo
+          pegar esses erros no middleware de errorhandler
+
+  Como funcionar o middlware de errorhandler
+    - aparetemente, ao dar next() com a instancia do error handler, eu crio uma stack de erro, entao cai no middleware de erros, que faz o tratamento
+
+2) Criacao do Front
+  OBS: dentro de package.json, ao configurar o proxy, nao preciso declarar a url pra fazer uma requisicao
+  OBS2: anchor da um reload na pagina Link fo react-router-dom, nao recarrega a pagina, é mil vezes mais rapido
+
+  - npx create-react-app . -> esse ponto significa que vai instalar na pasta em que o comando foi rodado, no caso, na pasta frontend
+  - npm i axios react-alert react-alert-template-basic react-bootstrap bootstrap react-helmet react-redux redux redux-thunk redux-devtools-extension react-router-dom
+  - criar componente de Header, Footer
+  - Criar paginas
+  - criar constants do reducer
+  - criar reducer
+  - criar store
+
+  Axios response:
+
+    - config:
+      - method: post, get, put, dele
+      - headers
+      - url
+      - timeout
+    
+    - data:
+      api response 
+
+    - headers:
+      - conetent type
+
+    - request: 
+      - response data em json stringfy
+      - statusText
+    
+    - status: api request code status
+    - statusText
