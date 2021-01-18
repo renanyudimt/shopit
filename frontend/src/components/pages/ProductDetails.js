@@ -1,4 +1,4 @@
-import React, { useEffect, Fragment } from 'react'
+import React, { useEffect, Fragment, useRef } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useAlert } from "react-alert"
 import Loader from "./../../components/layout/Loader"
@@ -10,18 +10,24 @@ const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert(); 
   const { product, error, loading } = useSelector(state => state.productDetails)
+  const isFirstRun = useRef(true)
 
   useEffect(() => {
-    dispatch(getProduct(match.params.id))
+    if (isFirstRun.current) {
+      isFirstRun.current = false
+      dispatch(getProduct(match.params.id))
+    }
 
     if (error) {
-      return alert.error(error);
+      alert.error(error);
+      dispatch(clearErrors())
     }
+
   }, [dispatch, error, alert, match.params.id])
 
   return (
     <Fragment>
-      <MetaData title={ product.name } />
+      <MetaData title={ product ? product.name : `Buy the best product online` } />
       <div className="container container-fluid">
         {loading ? <Loader />  :
           (<Fragment>
