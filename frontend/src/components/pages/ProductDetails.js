@@ -1,27 +1,24 @@
-import React, { useEffect, Fragment, useRef } from 'react'
+import React, { useEffect, Fragment } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useAlert } from "react-alert"
 import Loader from "./../../components/layout/Loader"
 import MetaData from "./../layout/MetaData"
+import { Carousel } from "react-bootstrap"
 
-import { getProduct, clearErrors } from "./../../actions/productActions"
+import { getProduct } from "./../../actions/productActions"
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert(); 
   const { product, error, loading } = useSelector(state => state.productDetails)
-  const isFirstRun = useRef(true)
 
   useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false
-      dispatch(getProduct(match.params.id))
-    }
 
     if (error) {
-      alert.error(error);
-      dispatch(clearErrors())
+      return alert.error(error);
     }
+
+    dispatch(getProduct(match.params.id))
 
   }, [dispatch, error, alert, match.params.id])
 
@@ -34,14 +31,20 @@ const ProductDetails = ({ match }) => {
             <div className="container container-fluid"> 
               <div className="row f-flex justify-content-around">
                 <div className="col-12 col-lg-5 img-fluid" id="product_image">
-                  <img src={ product.images[0].url } alt="sdf" height="500" width="500" />
+                  <Carousel pause="hover">
+                    {product.images && product.images.map(image => (
+                      <Carousel.Item key={image.public_id}>
+                        <img src={ image.url } alt={product.name} className="d-block w-100" />
+                      </Carousel.Item>
+                    ))}
+                  </Carousel>
                 </div>
                 <div className="col-12 col-lg-5 mt-5">
                   <h3>{ product.name }</h3>
                   <p id="product_id">Product # { product._id }</p>
                   <hr/>
                   <div className="rating-outer">
-                    <div className="rating-inner"></div> 
+                    <div className="rating-inner" style={{ width: `${(product.ratings/5) * 100}%` }}></div> 
                   </div>
                   <span id="no_of_reviews">({ product.reviews.length } Reviews)</span>
                   <hr/>
@@ -53,7 +56,7 @@ const ProductDetails = ({ match }) => {
                   </div>
                   <button type="button" id="cart_btn" className="btn btn-primary d-inline ml-4">Add to Cart</button>
                   <hr />
-                  <p>Status: <span id="stock_status">{product.stock > 0 ? "In Stock" : "Out of stock"}</span></p>
+                  <p>Status: <span id="stock_status" className={product.stock > 0 ? "greenColor" : "redColor"}>{product.stock > 0 ? "In Stock" : "Out of stock"}</span></p>
                   <hr/>
                   <h4 className="mt-2">Description:</h4>
                   <p>{ product.description }</p>
