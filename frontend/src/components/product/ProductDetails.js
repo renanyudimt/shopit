@@ -1,11 +1,11 @@
 import React, { useEffect, Fragment } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useAlert } from "react-alert"
-import Loader from "./../../components/layout/Loader"
-import MetaData from "./../layout/MetaData"
+import Loader from "../layout/Loader"
+import MetaData from "../layout/MetaData"
 import { Carousel } from "react-bootstrap"
 
-import { getProduct } from "./../../actions/productActions"
+import { getProduct } from "../../actions/productActions"
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
@@ -13,7 +13,8 @@ const ProductDetails = ({ match }) => {
   const { product, error, loading } = useSelector(state => state.productDetails)
 
   useEffect(() => {
-
+    //removi o useRef() porque cheguei a conclusao que nao preciso, assim que o state de product é atualizado, ele simplesmente remove 
+    //o state de error, ai nao entra novamente no useEffect() por conta da dependencia do error - aparentemente -
     if (error) {
       return alert.error(error);
     }
