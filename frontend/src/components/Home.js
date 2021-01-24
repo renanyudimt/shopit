@@ -127,7 +127,7 @@ function Home({ match }) {
                     </Fragment>
                   ) : (
                     products && products.map((product) => (
-                      <Product key={product._id} product={product} col={4} />
+                      <Product key={product._id} product={product} col={3} />
                     ))
                   )}
 
