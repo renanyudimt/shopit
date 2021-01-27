@@ -549,7 +549,7 @@ a[data-toggle='collapse'] {
   display: block;
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 0;
   transform: translateY(-50%);
 }
 
@@ -619,4 +619,21 @@ ul.CTAs a {
 .review_user {
   font-size: 0.8rem;
   color: grey;
+}
+
+.is-flex {
+  display: flex;
+}
+
+.is-flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.has-content-center {
+  justify-content: center;
+}
+
+.is-align-center {
+  align-items: center;
 }

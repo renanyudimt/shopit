@@ -9,17 +9,11 @@ const fileUpload = require("express-fileupload")
 
 const cors = require("cors");
 var corsOptions = {
-  origin: '*',
+  origin: 'http://localhost:3000',
+  credentials: true,
 }
 
-//app.use(cors(corsOptions))
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-
+app.use(cors(corsOptions))
 app.use(express.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
 

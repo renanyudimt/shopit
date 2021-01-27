@@ -6,7 +6,7 @@ const sendToken = (user, statusCode, res) => {
   //options for cookie
   const options = {
     expires: new Date( Date.now() + process.env.COOKIE_EXPIRES_TIME * 24 * 60 * 60 * 1000), //use to set expiration date for persistent cookies.
-    httpOnly: true, //Ensures the cookie is sent only over HTTP(S), not client JavaScript, helping to protect against cross-site scripting attacks.
+    httpOnly: false, //Ensures the cookie is sent only over HTTP(S), not client JavaScript, helping to protect against cross-site scripting attacks.
   }
 
   res.status(statusCode).cookie("shopit_token", token, options).json({

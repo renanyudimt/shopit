@@ -8,7 +8,10 @@ import {
   CLEAR_ERRORS,
   LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
-  LOAD_USER_FAIL
+  LOAD_USER_FAIL,
+  LOGOUT_SUCCESS,
+  LOGOUT_FAIL,
+  CLEAR_LOGOUT
 } from "./../constants/userConstants"
 
 const userInitialState = { user: { loading: false, isAuthenticated: false } }
@@ -33,6 +36,14 @@ export const userReducer = (state = userInitialState, action) => {
         user: action.payload
       }
 
+    case LOGOUT_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: false,
+        logout: true,
+        user: null
+      }
+
     case LOAD_USER_FAIL:
       return {
         loading: false,
@@ -45,6 +56,18 @@ export const userReducer = (state = userInitialState, action) => {
         loading: false,
         isAuthenticated: false,
         error: action.payload,
+      }
+    
+    case LOGOUT_FAIL: 
+      return {
+        ...state,
+        error: action.payload,
+      }
+
+    case CLEAR_LOGOUT:
+      return {
+        ...state,
+        logout: null
       }
 
     case CLEAR_ERRORS: 

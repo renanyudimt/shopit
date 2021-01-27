@@ -9,7 +9,10 @@ import {
   SIGNUP_FAIL,
   LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
-  LOAD_USER_FAIL
+  LOAD_USER_FAIL,
+  LOGOUT_SUCCESS,
+  LOGOUT_FAIL,
+  CLEAR_LOGOUT,
 } from "./../constants/userConstants"
 
 export const userLogin = (email, password) => async (dispatch) => {
@@ -21,16 +24,18 @@ export const userLogin = (email, password) => async (dispatch) => {
     const config = {
       headers: {
         'Content-Type' : "application/json"
-      }
+      },
+      withCredentials: true
     }
+    
 
     const payload = {
       email,
       password
     }
 
-    const { data } = await axios.post("http://localhost:4000/api/v1/login", payload, config)
-
+    const { data, headers } = await axios.post("http://localhost:4000/api/v1/login", payload, config)
+    console.log(headers)
     dispatch({
       type: LOGIN_SUCCESS,
       payload: data.user
@@ -46,7 +51,6 @@ export const userLogin = (email, password) => async (dispatch) => {
 
 export const userSignup = (userData) => async (dispatch) => {
   try {
-    console.log(userData)
     dispatch({
       type: SIGNUP_REQUEST
     })
@@ -78,7 +82,7 @@ export const loadUser = () => async (dispatch) => {
       type: LOAD_USER_REQUEST
     })
 
-    const { data } = await axios.get("http://localhost:4000/api/v1/user", null, {
+    const { data } = await axios.get("http://localhost:4000/api/v1/user", {
       withCredentials: true,
     })
 
@@ -93,6 +97,32 @@ export const loadUser = () => async (dispatch) => {
       payload: error.response.data.errorMessage
     })
   }
+}
+
+export const userLogout = () => async (dispatch) => {
+  try {
+
+    const config = {
+      withCredentials: true
+    }
+
+    await axios.get("http://localhost:4000/api/v1/logout", config)
+
+    dispatch({
+      type: LOGOUT_SUCCESS
+    })
+
+  } catch(error) {
+    dispatch({
+      type: LOGOUT_FAIL
+    })
+  }
+}
+
+export const clearLogout = () => async (dispatch) => {
+  dispatch({
+    type: CLEAR_LOGOUT
+  })
 }
 
 export const clearErrors = () => async (dispatch) => {

@@ -50,7 +50,7 @@ const Register = ({ history }) => {
   }
 
   function handleChange(e) {
-    if (e.target.name == "avatar") {
+    if (e.target.name === "avatar") {
       const reader = new FileReader();
 
       reader.onload = () => {
