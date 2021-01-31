@@ -8,7 +8,12 @@ const cloudinary = require("cloudinary");
 
 //Register user => /api/v1/register
 exports.registerUser = catchAsyncErrors(async(req, res, next) => { 
-  const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+  const { avatar } = req.body;
+  if (!avatar) {
+    return next(new ErrorHandler("Please, choose your profile image", 400));
+  }
+
+  const result = await cloudinary.v2.uploader.upload(avatar, {
     folder: 'avatars',
     width: 150,
     crop: "scale",
@@ -82,7 +87,7 @@ exports.forgotPassword = catchAsyncErrors(async(req, res, next) => {
   await user.save({ validateBeforeSave: false })
 
   //Create reset password url 
-  const url = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`
+  const url = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`
   const message = `Your password reset token is as follow: \n\n${url}\n\nIf you have not requested this email, then ignore it.`
 
   try {
@@ -111,6 +116,13 @@ exports.forgotPassword = catchAsyncErrors(async(req, res, next) => {
 // Reset password => /api/v1/password/reset/:token
 exports.resetPassword = catchAsyncErrors(async(req, res, next) => {
   
+  /**
+   * esse role é interessante, vamos la, quando eu chamo a funçao de perdi password e me mandar o link pra resetar por email,
+   * eu crio (no model) uma string de 20 caracteres, essa string é encryptada e salva no banco no registro do usuario, junto com uma data de expiraçao de 30 min
+   * no email, tem uma url, essa url, tem o token de 20 caracteres, que ao receber e enviar como params da funçao de reset password, eu encrypto ela de novo
+   * (a string encryptada no model é a mesma dentro dessa funçao) e procuro no banco o usuario que tiver o token exato e a data de expiration <= a data atual.
+  */
+
   //Hash URL token
   const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex')
   const user = await User.findOne({
@@ -122,18 +134,21 @@ exports.resetPassword = catchAsyncErrors(async(req, res, next) => {
     return next(new ErrorHandler("Password reset token is invalid or expired.", 400))
   }
 
-  if (req.body.password != req.body.confirmpassword) {
+  if (req.body.password != req.body.confirmPassword) {
     return next(new ErrorHandler("Password does not match", 400));
   }
 
   // setup new password 
   user.password = req.body.password
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpire = undefined;
+  user.resetPasswordToken = "";
+  user.resetPasswordExpire = "";
 
   await user.save();
 
-  sendToken(user, 200, res)
+  res.status(200).json({
+    success: true,
+    message: "Password successfully reseted, login now with your new password."
+  })
 })
 
 //Get currently logged in user details => /api/v1/user
@@ -149,7 +164,6 @@ exports.getUser = catchAsyncErrors(async (req, res, next) => {
 
 //Update or Change password (not forgeted) => /api/v1/password/update
 exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
-  
   //vou pedir pra ele digitar o antigo password e o novo password, por isso preciso do password atual
   const user = await User.findById(req.user.id).select("+password") 
   const isMatched = await user.comparePassword(req.body.oldPassword)
@@ -158,7 +172,7 @@ exports.updatePassword = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Old password is incorrect", 400))
   }
 
-  user.password = req.body.password
+  user.password = req.body.newPassword
   await user.save();
 
   sendToken(user, 200, res)
@@ -171,7 +185,25 @@ exports.updateUser = catchAsyncErrors(async (req, res, next) => {
     email: req.body.email,
   }
 
-  //Update avatar: @TODO
+  //Update avatar
+  if (req.body.avatar !== "") {
+    const user = await User.findById(req.user.id)
+    const image_id = user.avatar.public_id
+
+    await cloudinary.v2.uploader.destroy(image_id)
+
+    const result = await cloudinary.v2.uploader.upload(req.body.avatar, {
+      folder: 'avatars',
+      width: 150,
+      crop: "scale",
+    })
+
+
+    newUserData.avatar = {
+      public_id: result.public_id,
+      url: result.secure_url
+    }
+  }
 
   const user = await User.findByIdAndUpdate(req.user.id, newUserData, { 
     new: true,

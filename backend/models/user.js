@@ -25,12 +25,12 @@ const userSchema = mongoose.Schema({
   avatar: {
     public_id: {
       type: String,
-      required: true,
+      required: [true, "Please, select your profile image"]
     },
     url: {
       type: String,
-      required: true,
-    }
+      required: [true, "Please, select your profile image"]
+    },
   },
   role: {
     type: String,
@@ -40,8 +40,14 @@ const userSchema = mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  resetPasswordToken: String,
-  resetPasswordExpire: Date
+  resetPasswordToken: {
+    type: String,
+    select: false
+  },
+  resetPasswordExpire:  {
+    type: Date,
+    select: false
+  }
 })
 
 //Encrypting password before saving user

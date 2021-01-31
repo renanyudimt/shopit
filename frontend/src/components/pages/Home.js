@@ -28,7 +28,7 @@ function Home({ match }) {
 
   const categories = ["Electronics", "Cameras", "Laptops", "Accessories", "Headphones", "Food", "Books", "Clothes/Shoes", "Beauty/Health", "Sports", "Outdoor", "Home"]
 
-  const { loading, products, error, resPerPage, productsCount, filteredProductsCount } = useSelector(state => state.products)
+  const { loading, products, error, resPerPage, productsCount, filteredProductsCount } = useSelector(state => state.productsReducer)
 
   let count = productsCount
 
@@ -41,23 +41,21 @@ function Home({ match }) {
    */
 
   useEffect(async () => {
-
+    console.log("Home - UseEffect")
     if (error) {
       return alert.error(error);
     }
-
     dispatch(getProducts(currentPage,keyword, price, category, rating));
 
   }, [dispatch, alert, error, price, currentPage, keyword, category, rating])
 
   function handlePaginationChange(pageNumber) {
-    console.log(pageNumber)
     setCurrentPage(pageNumber)
   }
 
-
   return (
     <Fragment>
+        {console.log("Home - Return")}
       <MetaData title={`Buy the best product online`} />
       <div className="container container-fluid">
         {loading ? 

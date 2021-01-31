@@ -14,7 +14,7 @@ const Login = ({ history }) => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const { isAuthenticated, loading, error } = useSelector(state => state.user)
+  const { isAuthenticated, loading, error } = useSelector(state => state.userReducer)
 
   //testar error
   useEffect(() => {

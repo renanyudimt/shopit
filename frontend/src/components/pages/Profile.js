@@ -8,7 +8,7 @@ import MetaData from "./../layout/MetaData"
 const Profile = () => {
   const dispatch = useDispatch();
   const alert = useAlert();
-  const { user, loading } = useSelector((state) => state.user);
+  const { user, loading } = useSelector((state) => state.userReducer);
 
   return (
     <Fragment>
@@ -24,7 +24,7 @@ const Profile = () => {
                 <figure className="avatar avatar-profile">
                   <img className="rounded-circle img-fluid" src={user.avatar && user.avatar.url} alt={user.name} />
                 </figure>
-                <Link to="/profile/edit" id="edit_profile" className="btn btn-primary btn-block my-5">Edit Profile</Link>
+                <Link to="/profile/update" id="edit_profile" className="btn btn-primary btn-block my-5">Edit Profile</Link>
               </div>
 
               <div className="col-12 col-md-5">
@@ -40,7 +40,7 @@ const Profile = () => {
                 {user.role !== "admin" && (
                   <Link to='/orders' className="btn btn-danger btn-block mt-5"> My Orders</Link>
                 )}
-                <Link to="#" className="btn btn-primary btn-block mt-3">Change Password</Link>
+                <Link to="/password/update" className="btn btn-primary btn-block mt-3">Change Password</Link>
               </div>
             </div>
           </Fragment>

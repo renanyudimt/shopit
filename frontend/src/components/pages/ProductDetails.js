@@ -1,27 +1,45 @@
-import React, { useEffect, Fragment } from 'react'
+import React, { useEffect, Fragment, useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { useAlert } from "react-alert"
 import Loader from "../layout/Loader"
 import MetaData from "../layout/MetaData"
 import { Carousel } from "react-bootstrap"
 
-import { getProduct } from "../../actions/productActions"
+import { getProduct, clearErrors } from "../../actions/productActions"
+import { addItemToCart } from "./../../actions/cartActions"
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert(); 
-  const { product, error, loading } = useSelector(state => state.productDetails)
+  const { product, error, loading } = useSelector(state => state.productDetailsReducer)
+  const [qtd, setQtd] = useState(1);
 
   useEffect(() => {
-    //removi o useRef() porque cheguei a conclusao que nao preciso, assim que o state de product é atualizado, ele simplesmente remove 
-    //o state de error, ai nao entra novamente no useEffect() por conta da dependencia do error - aparentemente -
     if (error) {
-      return alert.error(error);
+      alert.error(error);
+      dispatch(clearErrors())
     }
 
     dispatch(getProduct(match.params.id))
 
   }, [dispatch, error, alert, match.params.id])
+
+  function handleMinus() {
+    if (qtd > 1) {
+      setQtd(qtd - 1)
+    }
+  }
+
+  function handlePlus() {
+    if (qtd < product.stock) {
+      setQtd(qtd + 1)
+    }
+  }
+
+  function handleAddToCart() {
+    dispatch(addItemToCart(match.params.id, qtd))
+    alert.success("Product added successfully!")
+  }
 
   return (
     <Fragment>
@@ -50,14 +68,19 @@ const ProductDetails = ({ match }) => {
                   <span id="no_of_reviews">({ product.reviews.length } Reviews)</span>
                   <hr/>
                   <p id="product_price">${ product.price }</p>
-                  <div className="stockCounter d-inline">
-                    <span className="btn btn-danger minus">-</span>
-                    <input type="number" className="form-control count d-inline" value="1" readOnly />
-                    <span className="btn btn-primary plus">+</span>
-                  </div>
-                  <button type="button" id="cart_btn" className="btn btn-primary d-inline ml-4">Add to Cart</button>
-                  <hr />
-                  <p>Status: <span id="stock_status" className={product.stock > 0 ? "greenColor" : "redColor"}>{product.stock > 0 ? "In Stock" : "Out of stock"}</span></p>
+                  {product.stock > 0 && (
+                    <Fragment>
+                      <div className="stockCounter d-inline">
+                        <span className="btn btn-danger minus" onClick={handleMinus}>-</span>
+                        <input type="number" className="form-control count d-inline" value={qtd} readOnly />
+                        <span className="btn btn-primary plus" onClick={handlePlus}>+</span>
+                      </div>
+                      <button type="button" id="cart_btn" className="btn btn-primary d-inline ml-4" onClick={handleAddToCart}>Add to Cart</button>
+                      <hr />
+                    </Fragment>
+                  )}
+                
+                  <p>Status: <span id="stock_status" className={product.stock > 0 ? "greenColor" : "redColor"}>{product.stock > 0 ? `${product.stock} in stock`: "Out of stock"}</span></p>
                   <hr/>
                   <h4 className="mt-2">Description:</h4>
                   <p>{ product.description }</p>

@@ -10,7 +10,8 @@ function Header() {
   const history = useHistory();
   const alert = useAlert();
   const dispatch = useDispatch();
-  const { user, loading, logout } = useSelector((state) => state.user);
+  const { user, loading, logout } = useSelector((state) => state.userReducer);
+  const { cartItems } = useSelector((state) => state.cartReducer);
 
   const handleLogout = () => {
     dispatch(userLogout());
@@ -40,14 +41,14 @@ function Header() {
         </div>
 
         <div className="col-12 col-md-6 mt-2 mt-md-0">
-          {/*passando o contexto de pagina, assim consigo ter acesso a funcoes como "push" dentro do Searh component*/}
+          {/*passando o contexto de pagina, assim consigo ter acesso a funcoes como "push" dentro do Search component*/}
           <Route render={({ history }) => <Search history={history} />} /> 
         </div>
 
         <div className="col-12 col-md-3 mt-4 mt-md-0 text-center is-flex is-align-center">
           <Link to="/cart" style={{ textDecoration: 'none' }} className="mr-3">
             <span id="cart" className="ml-3">Cart</span>
-            <span className="ml-1" id="cart_count">2</span>
+            <span className="ml-1" id="cart_count">{ cartItems.length }</span>
           </Link>
 
           {user ? (

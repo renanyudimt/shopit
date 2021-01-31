@@ -37,10 +37,8 @@ export const productsReducer = (state = initialStateProducts, action) => {
       }
 
     case CLEAR_ERRORS: 
-      return {
-        ...state,
-        error: null
-      }
+      const { error, ...rest } = state
+      return rest;
 
     default:
       return state
@@ -74,10 +72,8 @@ export const productDetailsReducer = (state = initialStateProductDetails, action
       };
 
     case CLEAR_ERRORS: 
-      return {
-        ...state,
-        error: null
-      }
+      const { error, ...rest } = state
+      return rest;
 
     default:
       return state

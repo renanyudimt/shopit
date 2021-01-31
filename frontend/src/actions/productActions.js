@@ -11,6 +11,7 @@ import {
 
 export const getProducts = (currentPage, keyword, price, category, rating) => async (dispatch) => {
   try {
+
     dispatch({ type: ALL_PRODUCT_REQUEST })
     let url = `http://localhost:4000/api/v1/products?keyword=${keyword}&page=${currentPage}&price[lte]=${price[1]}&price[gte]=${price[0]}&ratings[gte]=${rating}`
     

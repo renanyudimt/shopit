@@ -2,6 +2,7 @@ const Product = require("./../models/product");
 const ErrorHandler = require("./../utils/errorHandler");
 const catchAsyncErrors = require("./../middlewares/getAsyncErrors")
 const APIFeatures = require("../utils/apiFeatures");
+const mongoose = require("mongoose");
 
 //Creating new product => /api/v1/admin/product/new
 exports.newProduct = catchAsyncErrors(async(req, res, next) => {
@@ -168,4 +169,29 @@ exports.deleteReview = catchAsyncErrors(async(req, res, next) => {
     success: true,
     reviews
   })
+})
+
+//get user cart => /api/v1/cart
+exports.getCartProducts = catchAsyncErrors(async(req, res, next) => {
+  try {
+    let arr_items = [];
+    req.body.cartItems.map(item => {
+      arr_items.push(item.product)
+    })
+
+    const products = await Product.find({
+      '_id' : {
+        $in: arr_items
+      }
+    })
+
+    res.status(200).json({
+      success: true,
+      products
+    })
+    
+  
+  } catch(error) {
+
+  }
 })

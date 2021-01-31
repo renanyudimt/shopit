@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
+    "query-string": "^6.13.8",
     "rc-slider": "^9.7.1",
     "react": "^17.0.1",
     "react-alert": "^7.0.2",
