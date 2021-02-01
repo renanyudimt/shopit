@@ -1,5 +1,7 @@
 const express = require("express");
 const app = express();
+const dotenv = require("dotenv");
+dotenv.config({ path: 'backend/config/config.env'})
 
 const errorMiddleware = require("./middlewares/errors") 
 const cookieParser = require("cookie-parser");
@@ -29,11 +31,12 @@ app.use(fileUpload());
 const products = require('./routes/product');
 const user = require('./routes/user');
 const orders = require('./routes/order');
+const payment = require('./routes/payment')
 
 app.use('/api/v1', products);
 app.use('/api/v1', user);
 app.use('/api/v1', orders);
-
+app.use('/api/v1', payment)
 
 //Middleware to handle errors
 app.use(errorMiddleware)

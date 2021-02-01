@@ -90,13 +90,22 @@ export const updateCartQuantity = (id, newQuantity) => (dispatch) => {
   })
 }
 
-export const saveShippingInfo = (data) => (dispatch) => {
+export const saveShippingInfo = (formData) => (dispatch) => {
+
+  const shippingInfo = {
+    address: formData.get("address"),
+    city: formData.get("city"),
+    zipCode: formData.get("zipCode"),
+    phone: formData.get("phone"),
+    country: formData.get("country")  
+  }
+
   dispatch({
     type: ADD_SHIPPING_INFO,
-    payload: data
+    payload: shippingInfo
   })
 
-  localStorage.setItem("shippingInfo", JSON.stringify(data))
+  localStorage.setItem("shippingInfo", JSON.stringify(shippingInfo))
   
 }
 

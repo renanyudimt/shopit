@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom"
 import Header from "./components/layout/Header"
 import Footer from "./components/layout/Footer"
@@ -14,18 +14,30 @@ import ForgotPasswordPage from "./components/pages/ForgotPassword";
 import RedefinePassword from "./components/pages/RedefinePassword";
 import Cart from "./components/pages/Cart"
 import Shipping from "./components/pages/Shipping";
+import Confirm from "./components/pages/Confirm"
+import Payment from "./components/pages/Payment"
 
-import { LoggedRoute, NotLoggedRoute } from "./components/route/AlternativeRoutes"
+import { LoggedRoute, NotLoggedRoute, CheckoutRoute } from "./components/route/AlternativeRoutes"
 
+import { Elements } from "@stripe/react-stripe-js"
+import { loadStripe } from "@stripe/stripe-js"
 import { loadUser } from "./actions/userActions";
 import store from "./store";
 
 import './App.css';
+import axios from "axios";
 
 function App() {
-  console.log("app")
+
+  const [stripeApiKey, setStripeApiKey ] = useState("")
+
   useEffect(() => {
     store.dispatch(loadUser())
+    async function getStripeApi() {
+      const { data } = await axios.get("http://localhost:4000/api/v1/stripeapi")
+      setStripeApiKey(data.stripeApiKey)
+    }
+    getStripeApi();
   }, [])
 
   return (
@@ -42,7 +54,13 @@ function App() {
         <LoggedRoute path="/profile/update" component={UserUpdate} exact />
         <LoggedRoute path="/password/update" component={PasswordUpdate} exact />
         <Route path="/cart" component={Cart} exact />
-        <LoggedRoute path="/shipping" component={Shipping} exact/>
+        <CheckoutRoute path="/shipping" component={Shipping} exact/>
+        <CheckoutRoute path="/confirm" component={Confirm} exact/>
+        {stripeApiKey && (
+          <Elements stripe={loadStripe(stripeApiKey)}>
+            <CheckoutRoute path="/payment" component={Payment} exact/>
+          </Elements>
+        )}
         <Route path="/password/reset/:token" component={RedefinePassword} exact />
         <Footer />
       </div>

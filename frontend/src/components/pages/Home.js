@@ -41,7 +41,6 @@ function Home({ match }) {
    */
 
   useEffect(async () => {
-    console.log("Home - UseEffect")
     if (error) {
       return alert.error(error);
     }
@@ -55,7 +54,6 @@ function Home({ match }) {
 
   return (
     <Fragment>
-        {console.log("Home - Return")}
       <MetaData title={`Buy the best product online`} />
       <div className="container container-fluid">
         {loading ? 

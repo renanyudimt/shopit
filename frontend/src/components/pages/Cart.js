@@ -42,11 +42,21 @@ const Cart = () => {
     dispatch(deleteFromCart(id))
   }
 
-  function handleCheckout() {
+  function proceedCheckout() {
     history.push('/shipping', [{
       authorization: true
     }])
   }
+
+  function handleCheckout() {
+    if (products.length > 0) {
+      setModalShow(true)
+    } else {
+      alert.error("Your cart is empty")
+    }
+  }
+
+
 
   return (
     <Fragment>
@@ -120,7 +130,7 @@ const Cart = () => {
                     Est. total: <span className="order-summary-values">${products.length > 0 ? products.reduce((acc, item) => { return acc + Number(item.cartQuantity * item.price) }, 0) : 0.00}</span>
                   </p>
                   <hr />
-                  <button id="checkout_btn" className="btn btn-primary btn-block" onClick={() => { setModalShow(true) }}>
+                  <button id="checkout_btn" className="btn btn-primary btn-block" onClick={() => { handleCheckout(true) }}>
                     Check out
                   </button>
                 </div>
@@ -150,7 +160,7 @@ const Cart = () => {
           </p>
         </Modal.Body> */}
         <Modal.Footer>
-          <Button onClick={() => handleCheckout()}>Ok</Button>
+          <Button onClick={() => proceedCheckout()}>Ok</Button>
           <Button onClick={() => setModalShow(false)}>Close</Button>
         </Modal.Footer>
       </Modal>
