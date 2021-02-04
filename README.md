@@ -1,5 +1,5 @@
 # BACKEND:
-  ### Arquitetura baseada em MVC
+  - Arquitetura baseada em MVC
   
   - ./server.js -  Criacao do servidor e abertura de conexao, path do DB, cloduinary settings
   - ./app.js => cors, middlewares, cookie-parser (necessario para lers os cookies das requisicoes), import das rotas dinamicas e separadas por models, middleware de error
@@ -11,9 +11,9 @@
     - isAuthenticatedUser() verifica qual é o usuario que esta fazendo a requisicao, e adiciona ao corpo do header o contexto de usuario, caso o token nao esteja vencido ou errado
     - authorizedRoles() restringe o acesso de usuarios que nao sao das roles autorizada.
   
-  ./middlewares/error.js => custom error handler, retorna a mensagem de erro (gravada no model) ou uma generica de internal server error
-  ./middlewares/getAsyncErros.js => é um try/catch escondido, no catch, chama a funcao next passando pro middleware de error.
-  ./controllers/orderController.js =>
+  - ./middlewares/error.js => custom error handler, retorna a mensagem de erro (gravada no model) ou uma generica de internal server error
+  - ./middlewares/getAsyncErros.js => é um try/catch escondido, no catch, chama a funcao next passando pro middleware de error.
+  - ./controllers/orderController.js =>
     - createOrder(): ira criar uma ordem para o usuario tal, atualizar o BD subtraindo o quantitdade de itens comprados, colocar a status como "processing" e retornar a order
     - changeOrderStatus() altera o status da order pelo id
     - getOrder() retorna a order por id
@@ -24,12 +24,12 @@
     - deleteOrder() deleta a order, usado por admins
     - updateStock() atualiza o stock dos produtos de uma order
   
-  ./controllers/paymentController.js =>
+  - ./controllers/paymentController.js =>
     - checkProductsStock() verifica se a quantidade pedida existe de tal produto
     - sendStripeApi() retorna a stripe API KEY pro client
     - processPayment() cria uma intencao de pagamento e retorna o client secret 
 
-  ./controllers/productController.js => 
+  - ./controllers/productController.js => 
     - newProduct() cadastra um novo produto, usado por admins
     - getProducts() busca todos os produtos e retornar para o client com seus respectivos filtros
     - getProduct() busca um produto especifico e retorna
@@ -40,7 +40,7 @@
     - deleteReview() deleta a review de um produto feito por um usuario
     - getCartProducts() busca os produto do carrinho
 
-  ./controllers/productController.js => 
+  - ./controllers/productController.js => 
     - registerUser() registra um usuario
     - login() login de usuario, retorna um cookie criptografado que sera salvo no http, acessivel por request apenas 
     - logout() expira o cookie e desloga o usuario
@@ -54,17 +54,17 @@
     - updateTargetUser() atualiza um usuario por ID, usado por admins
     - deleteTargetUser() deleta o usuario pelo ID
 
-  ./routes/order.js =>
+  - ./routes/order.js =>
     - /order/new => url para criacao de uma nova order para um usuario logado
     - /order/:id => busca os dados de uma order por id
     - /admin/orders => busca todas as orders 
     - /admin/order/:id => buscar/atualiza/deleta uma order pelo id
 
-  ./routes/payment.js =>
+  - ./routes/payment.js =>
     - /payment/process => cria uma intencao de pagamento e retorna o client secret 
     - /stripeapi => retorno da stripe secret
 
-  ./routes/products.js => 
+  - ./routes/products.js => 
     - /products => retorna todos os produtos
     - /product/:id => retorna um produto
     - /admin/product/new => criacao de um produto 
@@ -73,7 +73,7 @@
     - /review => deleta/cria uma review para um produto
     - /reviews/ => retorna as reviews de um produto
     
-  ./rotues/users.js => 
+  - ./rotues/users.js => 
     - /register => regisro de usuario
     - /login => login de usuario
     - /password/forgot => envio de email e criacao do token de uma nova senha
