@@ -8,21 +8,21 @@
   - ./data/products.js => usado pra popular o db quando estiver vazio
   - ./models/... => todos os modelos do banco
   - ./middlewares/auth => 
-    - isAuthenticatedUser() verifica qual é o usuario que esta fazendo a requisicao, e adiciona ao corpo do header o contexto de usuario, caso o token nao esteja vencido ou errado
-    - authorizedRoles() restringe o acesso de usuarios que nao sao das roles autorizada.
+    - ```isAuthenticatedUser()``` verifica qual é o usuario que esta fazendo a requisicao, e adiciona ao corpo do header o contexto de usuario, caso o token nao esteja vencido ou errado
+    - ```authorizedRoles()``` restringe o acesso de usuarios que nao sao das roles autorizada.
   
   - ./middlewares/error.js => custom error handler, retorna a mensagem de erro (gravada no model) ou uma generica de internal server error
   - ./middlewares/getAsyncErros.js => é um try/catch escondido, no catch, chama a funcao next passando pro middleware de error.
   - ./controllers/orderController.js =>
-    - createOrder(): ira criar uma ordem para o usuario tal, atualizar o BD subtraindo o quantitdade de itens comprados, colocar a status como "processing" e retornar a order
-    - changeOrderStatus() altera o status da order pelo id
-    - getOrder() retorna a order por id
-    - getOrders() busca todas as orders do usuario
-    - getAllOrders() busca as orders de todos os usuarios, usado por admins
-    - getTargetOrder() busca a order por especifico ID, usado por admins
-    - updateTagetOrder() altera a order, usado por admins
-    - deleteOrder() deleta a order, usado por admins
-    - updateStock() atualiza o stock dos produtos de uma order
+    - ```createOrder():``` ira criar uma ordem para o usuario tal, atualizar o BD subtraindo o quantitdade de itens comprados, colocar a status como "processing" e retornar a order
+    - ```changeOrderStatus()``` altera o status da order pelo id
+    - ```getOrder()``` retorna a order por id
+    - ```getOrders()``` busca todas as orders do usuario
+    - ```getAllOrders()``` busca as orders de todos os usuarios, usado por admins
+    - ```getTargetOrder()``` busca a order por especifico ID, usado por admins
+    - ```updateTagetOrder()``` altera a order, usado por admins
+    - ```deleteOrder()``` deleta a order, usado por admins
+    - ```updateStock()``` atualiza o stock dos produtos de uma order
   
   - ./controllers/paymentController.js =>
     - checkProductsStock() verifica se a quantidade pedida existe de tal produto
