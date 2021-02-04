@@ -1,15 +1,15 @@
 # BACKEND:
   ### Arquitetura baseada em MVC
   
-  ### ./server.js -  Criacao do servidor e abertura de conexao, path do DB, cloduinary settings
-  ### ./app.js => cors, middlewares, cookie-parser (necessario para lers os cookies das requisicoes), import das rotas dinamicas e separadas por models, middleware de error
-  ### ./config/config.env => variaveis de ambiente do sistema
-  ### ./config/database.js => conexao com o banco de dados mongodb
-  ### ./data/products.js => usado pra popular o db quando estiver vazio
-  ### ./models/... => todos os modelos do banco
-  ### ./middlewares/auth => 
-    * - isAuthenticatedUser() verifica qual é o usuario que esta fazendo a requisicao, e adiciona ao corpo do header o contexto de usuario, caso o token nao esteja vencido ou errado
-    * - authorizedRoles() restringe o acesso de usuarios que nao sao das roles autorizada.
+  - ./server.js -  Criacao do servidor e abertura de conexao, path do DB, cloduinary settings
+  - ./app.js => cors, middlewares, cookie-parser (necessario para lers os cookies das requisicoes), import das rotas dinamicas e separadas por models, middleware de error
+  - ./config/config.env => variaveis de ambiente do sistema
+  - ./config/database.js => conexao com o banco de dados mongodb
+  - ./data/products.js => usado pra popular o db quando estiver vazio
+  - ./models/... => todos os modelos do banco
+  - ./middlewares/auth => 
+    - isAuthenticatedUser() verifica qual é o usuario que esta fazendo a requisicao, e adiciona ao corpo do header o contexto de usuario, caso o token nao esteja vencido ou errado
+    - authorizedRoles() restringe o acesso de usuarios que nao sao das roles autorizada.
   
   ./middlewares/error.js => custom error handler, retorna a mensagem de erro (gravada no model) ou uma generica de internal server error
   ./middlewares/getAsyncErros.js => é um try/catch escondido, no catch, chama a funcao next passando pro middleware de error.
