@@ -10,11 +10,11 @@ const orderSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    phoneNumber: {
+    phone: {
       type: String,
       required: true
     },
-    postalCode: {
+    zipCode: {
       type: String,
       required: true
     },
@@ -48,7 +48,7 @@ const orderSchema = new mongoose.Schema({
       type: String,
     }
   },
-  texPrice: {
+  taxPrice: {
     type: Number,
     required: true,
     default: 0.0

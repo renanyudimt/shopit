@@ -5,9 +5,7 @@ const APIFeatures = require("../utils/apiFeatures");
 
 //Creating new product => /api/v1/admin/product/new
 exports.newProduct = catchAsyncErrors(async(req, res, next) => {
-  console.log("user", req.user)
   req.body.user = req.user._id;
-  console.log(req.body)
   
   const product = await Product.create(req.body);
   res.status(201).json({
@@ -18,7 +16,6 @@ exports.newProduct = catchAsyncErrors(async(req, res, next) => {
 
 //Get all Products => api/v1/produtcs
 exports.getProducts = catchAsyncErrors(async(req, res, next) => {  
-  console.log(req.user)
   const resPerPage = 4;
   const productsCount = await Product.countDocuments();
 
@@ -172,25 +169,15 @@ exports.deleteReview = catchAsyncErrors(async(req, res, next) => {
 
 //get user cart => /api/v1/cart
 exports.getCartProducts = catchAsyncErrors(async(req, res, next) => {
-  try {
-    let arr_items = [];
-    req.body.cartItems.map(item => {
-      arr_items.push(item.product)
-    })
+  const arr_items = req.body.cartItems.map(item => (item.product))
+  const products = await Product.find({
+    '_id' : {
+      $in: arr_items
+    }
+  })
 
-    const products = await Product.find({
-      '_id' : {
-        $in: arr_items
-      }
-    })
-
-    res.status(200).json({
-      success: true,
-      products
-    })
-    
-  
-  } catch(error) {
-
-  }
+  res.status(200).json({
+    success: true,
+    products
+  })
 })

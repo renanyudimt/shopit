@@ -1,40 +1,23 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import { useSelector } from "react-redux"
-import { Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import MetaData from "./../layout/MetaData"
-import CheckoutSteps from "./../Cart/CheckoutSteps"
-import { useHistory } from "react-router-dom"
+import CheckoutSteps from "../cart/CheckoutSteps"
 
 const Confirm = () => {
   const { user } = useSelector(state => state.userReducer)
   const { products, shippingInfo } = useSelector(state => state.cartReducer)
-
-  const history = useHistory()
   const orderPrice = products.reduce((acc, item) => { return acc + Number(item.cartQuantity * item.price) }, 0)
   const taxPrice = Number(0.05 * orderPrice).toFixed(2);
   const shippingPrice = orderPrice > 200 ? 0 : 25;
-  const totalPrice = Number(orderPrice) + Number(shippingPrice) + Number(taxPrice)
-  
-  function handleProceedPayment() {
-    const data = {
-      orderPrice,
-      taxPrice,
-      shippingPrice,
-      totalPrice
-    }
-    
-    localStorage.setItem("orderInfo", JSON.stringify(data))
+  const totalPrice = (Number(orderPrice) + Number(shippingPrice) + Number(taxPrice)).toFixed(2)
+  const history = useHistory(); 
 
+  function handleProceedPayment() {
     history.push('/payment', [{
       authorization: true
     }])
   }
-
-  useEffect(() => {
-    if (!products.length > 0) {
-      history.push("/cart")
-    }
-  }, [])
 
   return (
     <Fragment>
@@ -67,13 +50,13 @@ const Confirm = () => {
                   </div>
 
                   <div className="col-4 col-lg-4 mt-4 mt-lg-0">
-                  <p>{item.cartQuantity} x ${ item.price } = <b>${item.price * item.cartQuantity}</b></p>
+                  <p>{item.cartQuantity} x ${ item.price } = <b>${(item.price * item.cartQuantity).toFixed(2)}</b></p>
                   </div>
                 </div>
               </div>
               ) 
             )}
-           
+          
             <hr />
           </div>
 

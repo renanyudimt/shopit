@@ -1,11 +1,13 @@
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useEffect, Fragment } from "react";
 import MetaData from "./../layout/MetaData";
 import { useDispatch, useSelector } from "react-redux"
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from "@stripe/react-stripe-js"
 import axios from "axios"
 import { useHistory } from "react-router-dom"
-import CheckoutSteps from "./../Cart/CheckoutSteps"
+import CheckoutSteps from "../cart/CheckoutSteps"
 import { useAlert } from "react-alert"
+import { clearErrors, createOrder } from "./../../actions/orderActions"
+import { clearCart } from "./../../actions/cartActions"
 
 const options = {
   style: {
@@ -26,14 +28,30 @@ const Payment = () => {
   const alert = useAlert();
 
   const { user } = useSelector(state => state.userReducer)
-  const { cartItems, shippingInfo } = useSelector(state => state.cartReducer)
-  const orderInfo = JSON.parse(localStorage.getItem("orderInfo"));
+  const { cartItems, products, shippingInfo } = useSelector(state => state.cartReducer)
+  const { error, success } = useSelector(state => state.createOrderReducer)
 
-  const paymentData = {
-    amount: Math.round(orderInfo.totalPrice * 100),
-  }
+  const orderPrice = products.reduce((acc, item) => { return acc + Number(item.cartQuantity * item.price) }, 0)
+  const taxPrice = Number(0.05 * orderPrice).toFixed(2);
+  const shippingPrice = orderPrice > 200 ? 0 : 25;
+  const totalPrice = (Number(orderPrice) + Number(shippingPrice) + Number(taxPrice)).toFixed(2)
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (error) {
+      alert.error(error)
+      dispatch(clearErrors())
+    }
+
+    if (success) {
+      localStorage.clear();
+      dispatch(clearCart())
+
+      history.push("/success", [{
+        authorization: true
+      }])
+    }
+
+  }, [alert, dispatch, error, success]);
 
   async function handlerSubmit(e) {
     e.preventDefault();
@@ -48,7 +66,12 @@ const Payment = () => {
         withCredentials: true
       }
 
-      res = await axios.post(`http://localhost:4000/api/v1/payment/process`, paymentData, config)
+      const payload = {
+        amount: Math.round(totalPrice * 100),
+        cartItems
+      }
+
+      res = await axios.post(`http://localhost:4000/api/v1/payment/process`, payload, config)
       const clientSecret = res.data.client_secret 
 
       if (!stripe || !elements) {
@@ -66,14 +89,30 @@ const Payment = () => {
       })
 
       if (result.error) {
-        alert.error(result.error.message)
+        const { message } = result.error
+        //console.log(code, type, message)
+        alert.error(message)
         document.querySelector("#pay_btn").disabled = false
       } else {
         if (result.paymentIntent.status === "succeeded") {
-          //creting new order
-          history.push("/success", [{
-            authorization: true
-          }])
+          const order = {
+            shippingInfo,
+            user: user._id,
+            orderItems: cartItems,
+            paymentInfo: {
+              id: result.paymentIntent.id,
+              status: result.paymentIntent.status
+            },
+            taxPrice,
+            shippingPrice,
+            totalPrice,
+            orderStatus: "Paid",
+            paidAt: Date.now(),
+            createdAt: Date.now()
+          }
+
+          dispatch(createOrder(order))
+
         } else {
           alert.error("There is some issue while payment processing")
         }
@@ -93,6 +132,7 @@ const Payment = () => {
         <div className="row wrapper">
           <div className="col-10 col-lg-5">
             <form className="shadow-lg" onSubmit={handlerSubmit}>
+              { /* ou entao posso usar um <CardElement /> e usar a funcao createPaymentMethod ao invez de confirmPaymentMethod */ }
               <h1 className="mb-4">Card Info</h1>
               <div className="form-group">
                 <label htmlFor="card_num_field">Card Number</label>
@@ -124,7 +164,7 @@ const Payment = () => {
                 />
               </div>
               <button id="pay_btn" type="submit" className="btn btn-block py-3">
-                {`Pay - ${orderInfo && orderInfo.totalPrice}`}
+                {`Pay - ${totalPrice}`}
               </button>
             </form>
           </div>

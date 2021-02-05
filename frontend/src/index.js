@@ -11,7 +11,6 @@ import AlertTemplate from "react-alert-template-basic"
 
 import reportWebVitals from './reportWebVitals';
 
-
 const options = {
   timeout: 5000,
   position: positions.BOTTOM_CENTER,

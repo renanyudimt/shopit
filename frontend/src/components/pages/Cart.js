@@ -55,9 +55,7 @@ const Cart = () => {
       alert.error("Your cart is empty")
     }
   }
-
-
-
+  
   return (
     <Fragment>
       <MetaData title={"Cart"} />

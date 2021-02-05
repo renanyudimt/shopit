@@ -2,6 +2,7 @@ import axios from "axios";
 import {
   ADD_TO_CART,
   REMOVE_FROM_CART,
+  CLEAR_CART,
   CART_ITEMS_REQUEST,
   CART_ITEMS_SUCCESS,
   CART_ITEMS_FAIL,
@@ -60,6 +61,8 @@ export const loadCart = (cartItems) => async (dispatch) => {
       }
     })
 
+    localStorage.setItem("products", JSON.stringify(products))
+
     dispatch({
       type: CART_ITEMS_SUCCESS,
       payload: products
@@ -107,6 +110,12 @@ export const saveShippingInfo = (formData) => (dispatch) => {
 
   localStorage.setItem("shippingInfo", JSON.stringify(shippingInfo))
   
+}
+
+export const clearCart = () => async (dispatch) => {
+  dispatch({
+    type: CLEAR_CART
+  })
 }
 
 export const clearCartErrors = () => async (dispatch) => {

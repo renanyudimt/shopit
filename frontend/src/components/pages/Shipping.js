@@ -4,7 +4,7 @@ import MetaData from "../layout/MetaData";
 import { countries } from "countries-list"
 import { useLocation, useHistory } from "react-router-dom"
 import { saveShippingInfo } from "./../../actions/cartActions"
-import CheckoutSteps from "./../Cart/CheckoutSteps"
+import CheckoutSteps from "../cart/CheckoutSteps"
 
 const Shipping = () => {
   const { shippingInfo } = useSelector(state => state.cartReducer)

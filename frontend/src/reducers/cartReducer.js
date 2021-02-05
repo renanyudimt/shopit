@@ -6,6 +6,7 @@ import {
   CART_ITEMS_FAIL,
   CART_ITEMS_CLEAR_ERRORS,
   CART_ITEMS_UPDATE_QUANTITY,
+  CLEAR_CART,
   ADD_SHIPPING_INFO
 
 } from "./../constants/cartConstants"
@@ -19,7 +20,7 @@ const initialStateCart = {
     zipCode: "",
     country: "",
   }, 
-  products: []
+  products: localStorage.getItem("products") ? JSON.parse(localStorage.getItem("products")) : []
 }
 
 export const cartReducer = (state = initialStateCart, action) => {
@@ -96,6 +97,9 @@ export const cartReducer = (state = initialStateCart, action) => {
         ...state, 
         shippingInfo: action.payload
       }
+
+    case CLEAR_CART: 
+      return initialStateCart
 
     default: 
       return state

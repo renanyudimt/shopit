@@ -1,6 +1,5 @@
 const Order = require("./../models/order")
 const Product = require("./../models/product")
-
 const ErrorHandler = require("./../utils/errorHandler")
 const catchAsyncErrors = require("./../middlewares/getAsyncErrors")
 
@@ -13,10 +12,16 @@ exports.createOrder = catchAsyncErrors(async(req, res, next) => {
     taxPrice, 
     shippingPrice,
     totalPrice,
+    orderStatus,
     paymentInfo
 
   } = req.body
 
+  orderItems.forEach(async item => {
+    await updateStock(item.product, item.quantity, next)
+  })
+
+  
   const order = await Order.create({
     orderItems, 
     shippingInfo,
@@ -25,6 +30,7 @@ exports.createOrder = catchAsyncErrors(async(req, res, next) => {
     shippingPrice,
     totalPrice,
     paymentInfo,
+    orderStatus,
     paidAt: Date.now(),
     user: req.user._id
   })
@@ -33,6 +39,7 @@ exports.createOrder = catchAsyncErrors(async(req, res, next) => {
     success: true,
     order
   })
+
 })
 
 //get logged in single order => /api/v1/order/:id
@@ -120,7 +127,7 @@ exports.updateTagetOrder = catchAsyncErrors(async(req, res, next) => {
   }
 
   order.orderItems.forEach(async item => {
-    await updateStock(item.product, item.quantity)
+    await updateStock(item.product, item.quantity, next)
   })
 
   order.orderStatus = req.body.status;
@@ -139,13 +146,15 @@ exports.updateTagetOrder = catchAsyncErrors(async(req, res, next) => {
   })
 })
 
-async function updateStock(id, quantity) {
-  const product = await Product.findById(id)
-
-  product.stock = product.stock - quantity;
-
-  await product.save({ validateBeforeSave: false })
-} 
+async function updateStock(id, quantity, next) {
+  try {
+    const product = await Product.findById(id)
+    product.stock = product.stock - quantity;
+    await product.save({ validateBeforeSave: true })
+  } catch(error) {
+    next();
+  }
+}
 
 //DELETE order - ADMIN => /api/v1/admin/order/:id
 exports.deleteOrder = catchAsyncErrors(async(req, res, next) => {

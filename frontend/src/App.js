@@ -16,6 +16,8 @@ import Cart from "./components/pages/Cart"
 import Shipping from "./components/pages/Shipping";
 import Confirm from "./components/pages/Confirm"
 import Payment from "./components/pages/Payment"
+import Success from "./components/pages/Success"
+import Orders from "./components/pages/Orders"
 
 import { LoggedRoute, NotLoggedRoute, CheckoutRoute } from "./components/route/AlternativeRoutes"
 
@@ -53,6 +55,7 @@ function App() {
         <LoggedRoute path="/profile" component={Profile} exact />
         <LoggedRoute path="/profile/update" component={UserUpdate} exact />
         <LoggedRoute path="/password/update" component={PasswordUpdate} exact />
+        <Route path="/password/reset/:token" component={RedefinePassword} exact />
         <Route path="/cart" component={Cart} exact />
         <CheckoutRoute path="/shipping" component={Shipping} exact/>
         <CheckoutRoute path="/confirm" component={Confirm} exact/>
@@ -61,7 +64,8 @@ function App() {
             <CheckoutRoute path="/payment" component={Payment} exact/>
           </Elements>
         )}
-        <Route path="/password/reset/:token" component={RedefinePassword} exact />
+        <CheckoutRoute path="/success" component={Success} exact/>
+        <LoggedRoute path="/orders" component={Orders} exact />
         <Footer />
       </div>
     </Router>

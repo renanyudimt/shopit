@@ -15,7 +15,6 @@
   - ./middlewares/getAsyncErros.js => é um try/catch escondido, no catch, chama a funcao next passando pro middleware de error.
   - ./controllers/orderController.js =>
     - ```createOrder():``` ira criar uma ordem para o usuario tal, atualizar o BD subtraindo o quantitdade de itens comprados, colocar a status como "processing" e retornar a order
-    - ```changeOrderStatus()``` altera o status da order pelo id
     - ```getOrder()``` retorna a order por id
     - ```getOrders()``` busca todas as orders do usuario
     - ```getAllOrders()``` busca as orders de todos os usuarios, usado por admins
