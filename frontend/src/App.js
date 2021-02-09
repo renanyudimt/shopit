@@ -17,7 +17,11 @@ import Shipping from "./components/pages/Shipping";
 import Confirm from "./components/pages/Confirm"
 import Payment from "./components/pages/Payment"
 import Success from "./components/pages/Success"
+import Order from "./components/pages/Order"
 import Orders from "./components/pages/Orders"
+
+//Admin pages
+import Dashboard from "./components/pages/admin-Dashboard"
 
 import { LoggedRoute, NotLoggedRoute, CheckoutRoute } from "./components/route/AlternativeRoutes"
 
@@ -65,7 +69,11 @@ function App() {
           </Elements>
         )}
         <CheckoutRoute path="/success" component={Success} exact/>
+        <LoggedRoute path="/order/:id" component={Order} exact />
         <LoggedRoute path="/orders" component={Orders} exact />
+
+        <LoggedRoute path="/dashboard" isAdmin={true} component={Dashboard} exact />
+
         <Footer />
       </div>
     </Router>

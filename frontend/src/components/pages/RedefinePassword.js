@@ -47,7 +47,6 @@ const RedefinePassword = () => {
     const formData = new FormData(e.target)
     formData.set("password", password)
     formData.set("confirmPassword", confirmPassword)
-    console.log(params.token, formData)
     dispatch(newPassword(params.token, formData))
   }
 

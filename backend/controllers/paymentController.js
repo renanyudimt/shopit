@@ -17,7 +17,6 @@ const checkProductsStock = async (items, next) => {
           $gte: item.quantity 
         }
       }).then(result => {
-        console.log("pass", pass)
         if (pass) {
           res(pass = result.length > 0 ? true : false)
         }
@@ -30,8 +29,6 @@ const checkProductsStock = async (items, next) => {
 exports.processPayment = catchAsyncErrors( async(req, res, next) => {
   //Into this page, i'll check again if all products and product quantity is available, if it is, process the payment, if dont, return error
   const productsAvailable = await checkProductsStock(req.body.cartItems, next)
-
-  console.log("final", productsAvailable);
 
   if (!productsAvailable) {
     return next(new ErrorHandler("Ooops! Looks like there's no stock for one or more product", 400));

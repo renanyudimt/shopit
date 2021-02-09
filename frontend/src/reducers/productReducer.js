@@ -5,7 +5,15 @@ import {
   CLEAR_ERRORS,
   PRODUCT_DETAILS_REQUEST,
   PRODUCT_DETAILS_SUCCESS,
-  PRODUCT_DETAILS_FAIL
+  PRODUCT_DETAILS_FAIL,
+  NEW_REVIEW_REQUEST,
+  NEW_REVIEW_SUCCESS,
+  NEW_REVIEW_FAIL,
+  NEW_REVIEW_CLEAR,
+  DELETE_REVIEW_REQUEST,
+  DELETE_REVIEW_SUCCESS,
+  DELETE_REVIEW_FAIL
+  
 } from "../constants/productConstants"
 
 const initialStateProducts = {
@@ -74,6 +82,44 @@ export const productDetailsReducer = (state = initialStateProductDetails, action
     case CLEAR_ERRORS: 
       const { error, ...rest } = state
       return rest;
+
+    default:
+      return state
+  }
+}
+
+const initialStateNewReview = { }
+export const newReviewReducer = (state = initialStateNewReview, action) => {
+  switch(action.type) {
+    case DELETE_REVIEW_REQUEST:
+    case NEW_REVIEW_REQUEST:
+      return {
+        loading: true
+      }
+
+    case DELETE_REVIEW_SUCCESS:
+      return {
+        loading: false,
+        success: action.payload,  
+        message: "Review deleted successfully"
+      }
+
+    case NEW_REVIEW_SUCCESS:
+      return {
+        loading: false,
+        success: action.payload,
+        message: "Review posted successfully"
+      }
+
+    case DELETE_REVIEW_FAIL:
+    case NEW_REVIEW_FAIL:
+      return {
+        loading: false,
+        error: action.payload
+      }
+
+    case NEW_REVIEW_CLEAR: 
+      return state
 
     default:
       return state

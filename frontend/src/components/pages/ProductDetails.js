@@ -3,16 +3,62 @@ import { useDispatch, useSelector } from "react-redux"
 import { useAlert } from "react-alert"
 import Loader from "../layout/Loader"
 import MetaData from "../layout/MetaData"
-import { Carousel } from "react-bootstrap"
+import { Carousel, Modal, Button } from "react-bootstrap"
+import ReviewsList from "./../product/ReviewsList"
 
-import { getProduct, clearErrors } from "../../actions/productActions"
+import { getProduct, clearErrors, resetNewReview, newReview, deleteReview } from "../../actions/productActions"
 import { addItemToCart } from "./../../actions/cartActions"
 
 const ProductDetails = ({ match }) => {
   const dispatch = useDispatch();
   const alert = useAlert(); 
   const { product, error, loading } = useSelector(state => state.productDetailsReducer)
+  const { user } = useSelector(state => state.userReducer)
+  const { error: reviewError, success, loading: reviewLoading, message } = useSelector(state => state.newReviewReducer)
   const [qtd, setQtd] = useState(1);
+  const [show, setShow] = useState(false);
+  const [rating, setRating] = useState(1);
+  const [comment, setComment] = useState("");
+
+  const handleCloseReviewModal = () => setShow(false);
+  const handleShowReviewModal = () => setShow(true);
+
+  const handleModalFunctions = () => {
+    const stars = document.querySelectorAll(".star");
+
+    stars.forEach((star, index) => {
+      star.dataset.value = index + 1;
+
+      ["click", "mouseover", "mouseout"].forEach(function (e) {
+        star.addEventListener(e, showRatings);
+      });
+    });
+
+    function showRatings(e) {
+      stars.forEach((star, index) => {
+        if (e.type === "click") {
+          if (index < this.dataset.value) {
+            star.classList.add("orange");
+            setRating(this.dataset.value);
+          } else {
+            star.classList.remove("orange");
+          }
+        }
+
+        if (e.type === "mouseover") {
+          if (index < this.dataset.value) {
+            star.classList.add("yellow");
+          } else {
+            star.classList.remove("yellow");
+          }
+        }
+
+        if (e.type === "mouseout") {
+          star.classList.remove("yellow");
+        }
+      });
+    }
+  }
 
   useEffect(() => {
     if (error) {
@@ -20,9 +66,21 @@ const ProductDetails = ({ match }) => {
       dispatch(clearErrors())
     }
 
+    if (reviewError) {
+      alert.error(reviewError);
+      handleCloseReviewModal();
+      dispatch(resetNewReview())
+    }
+
+    if(success) {
+      alert.success(message)
+      handleCloseReviewModal();
+      dispatch(resetNewReview())
+    }
+
     dispatch(getProduct(match.params.id))
 
-  }, [dispatch, error, alert, match.params.id])
+  }, [dispatch, error, reviewError, success, alert, match.params.id])
 
   function handleMinus() {
     if (qtd > 1) {
@@ -39,6 +97,18 @@ const ProductDetails = ({ match }) => {
   function handleAddToCart() {
     dispatch(addItemToCart(match.params.id, qtd))
     alert.success("Product added successfully!")
+  }
+
+  function handleSubmitReview() {
+    const formData = new FormData()
+    formData.set("rating", rating)
+    formData.set("comment", comment)
+    formData.set("productId", match.params.id)
+    dispatch(newReview(formData))
+  }
+
+  function handleDeleteReview(reviewId) {
+    dispatch(deleteReview(match.params.id, reviewId))
   }
 
   return (
@@ -85,38 +155,38 @@ const ProductDetails = ({ match }) => {
                   <h4 className="mt-2">Description:</h4>
                   <p>{ product.description }</p>
                   <hr />
-                  <p id="product_seller mb-3">Sold by: <strong>{product.seller}</strong></p>				
-                  <button id="review_btn" type="button" className="btn btn-primary mt-4" data-toggle="modal" data-target="#ratingModal">Submit Your Review</button>
-                  <div className="row mt-2 mb-5">
-                    <div className="rating w-50">
-                      <div className="modal fade" id="ratingModal" tabIndex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
-                        <div className="modal-dialog" role="document">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h5 className="modal-title" id="ratingModalLabel">Submit Review</h5>
-                              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                            <div className="modal-body">
-                              <ul className="stars" >
-                                <li className="star"><i className="fa fa-star"></i></li>
-                                <li className="star"><i className="fa fa-star"></i></li>
-                                <li className="star"><i className="fa fa-star"></i></li>
-                                <li className="star"><i className="fa fa-star"></i></li>
-                                <li className="star"><i className="fa fa-star"></i></li>
-                              </ul>
-                              <textarea name="review" id="review" className="form-control mt-3"></textarea>
-                              <button className="btn my-3 float-right review-btn px-4 text-white" data-dismiss="modal" aria-label="Close">Submit</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <p id="product_seller mb-3">Sold by: <strong>{product.seller}</strong></p>	
+
+                  {user ? (
+                    <button type="button" className="btn btn-primary mt-4" onClick={handleShowReviewModal}>Submit Your Review</button>
+                  ) : (
+                    <div id="review_btn" className="alert alert-danger mt-5" type="alert">Login to post your review</div>
+                  )}			
+
+
+                  <Modal show={show} onHide={handleCloseReviewModal} id="modalReview" onShow={handleModalFunctions}>
+                    <Modal.Header closeButton> 
+                      <Modal.Title>Submit Review</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <ul className="stars" >
+                        <li className="star"><i className="fa fa-star"></i></li>
+                        <li className="star"><i className="fa fa-star"></i></li>
+                        <li className="star"><i className="fa fa-star"></i></li>
+                        <li className="star"><i className="fa fa-star"></i></li>
+                        <li className="star"><i className="fa fa-star"></i></li>
+                      </ul>
+                      <textarea name="review" id="review" className="form-control mt-3" value={comment} onChange={(e) => setComment(e.target.value)}></textarea>
+                      <Button className="btn my-3 float-right review-btn px-4 text-white" onClick={handleSubmitReview} disabled={reviewLoading ? true : false}>Submit</Button>
+                    </Modal.Body>
+                  </Modal>
                 </div>
               </div>
             </div>
+
+          { product.reviews && product.reviews.length > 0 && (
+            <ReviewsList reviews={ product.reviews } user={user} handleDeleteReview={handleDeleteReview} />
+          )}
           </Fragment>)
         }
       </div>

@@ -54,7 +54,7 @@ export const myOrdersReducer = (state = initialStateMyOrders, action) => {
 
     case ALL_ORDERS_SUCCESS:
       return {
-        loading: true,
+        loading: false,
         orders: action.payload
       }
 
@@ -70,6 +70,33 @@ export const myOrdersReducer = (state = initialStateMyOrders, action) => {
       return rest
 
     default: 
+      return state;
+  }
+}
+
+const initialStateTargetOrder = { order: {}, loading: true }
+export const getOrderReducer = (state = initialStateTargetOrder, action) => {
+  switch(action.type) {
+    case GET_ORDER_REQUEST:
+      return {
+        loading: true,
+        order: {}
+      }
+
+    case GET_ORDER_SUCCESS:
+      return {
+        loading: false,
+        order: action.payload
+      }
+
+    case GET_ORDER_FAIL:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload
+      }
+
+    default:
       return state;
   }
 }

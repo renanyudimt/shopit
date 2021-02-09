@@ -165,7 +165,6 @@ export const updateUser = (userData) => async (dispatch) => {
 }
 
 export const updatePassword = (passwords) => async (dispatch) => {
-  console.log(passwords)
   try {
     dispatch({
       type: UPDATE_PASSWORD_REQUEST

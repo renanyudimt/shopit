@@ -50,11 +50,11 @@ export const getAllOrders = () => async (dispatch) => {
       withCredentials: true
     }
 
-    const { data } = await axios.get("http://localhost:4000/orders", config)
+    const { data } = await axios.get("http://localhost:4000/api/v1/orders", config)
 
     dispatch({
       type: ALL_ORDERS_SUCCESS,
-      payload: data
+      payload: data.orders
     })
 
   } catch(error) {
@@ -75,7 +75,7 @@ export const getOrder = (id) => async (dispatch) => {
       withCredentials: true
     }
 
-    const { data } = await axios.get(`http://localhost:4000/order/${id}`, id ,config)
+    const { data } = await axios.get(`http://localhost:4000/api/v1/order/${id}`, config)
 
     dispatch({
       type: GET_ORDER_SUCCESS,

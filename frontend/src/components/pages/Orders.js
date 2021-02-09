@@ -1,69 +1,92 @@
-import React, { Fragment } from "react";
-import MetaData from "./../layout/MetaData";
+import React, { Fragment, useEffect } from 'react'
+import { Link } from "react-router-dom"
+import Loader from "../layout/Loader"
+import { MDBDataTable } from "mdbreact"
+import MetaData from "../layout/MetaData"
+import { useAlert } from "react-alert"
+import { useDispatch, useSelector } from "react-redux"
+import { getAllOrders, clearErrors } from "../../actions/orderActions"
 
-const Orders = () => {
+const ListOrders = () => {
+  const alert = useAlert();
+  const dispatch = useDispatch()
+  const { orders, loading, error } = useSelector(state => state.myOrdersReducer) 
+
+  useEffect(() => {
+    if (error) {
+      alert.error(error)
+      dispatch(clearErrors())
+    }
+    dispatch(getAllOrders())
+  }, [dispatch, error, alert])
+
+  function setOrders() {
+    const data = {
+      columns: [
+        {
+          label: "Order ID",
+          field: "id",
+          sort: "asc"
+        },
+        {
+          label: "Num of Items",
+          field: "numOfItems", //fazer uma logica que pega o acc de todos os itens
+          sort: "asc"
+        },
+        {
+          label: "Amount",
+          field: "amount",
+          sort: "asc"
+        },
+        {
+          label: "Status",
+          field: "status",
+          sort: "asc"
+        },
+        {
+          label: "Actions",
+          field: "actions", 
+          sort: "asc"
+        }
+      ],
+      rows: [ ]
+    }
+
+    orders.forEach( order => {
+      data.rows.push({
+        id: order._id,
+        numOfItems: order.orderItems.length,
+        amount: `$${order.totalPrice}`,
+        status: order.orderStatus && String(order.orderStatus).includes("Delivered") ?
+          <p style={{color: "green"}}>{order.orderStatus}</p> :
+          <p style={{color: "green"}} >{ order.orderStatus }</p>,
+        actions: <Link className="btn btn-primary" to={`/order/${order._id}`}><i className="fa fa-eye"></i></Link>
+      })
+    })
+
+    return data;
+  }
+
   return (
     <Fragment>
-      <MetaData title={"My Orders"} />
-      <div class="container container-fluid">
-        <div class="row d-flex justify-content-between">
-          <div class="col-12 col-lg-8 mt-5 order-details">
-            <h1 class="my-5">Order # 4543f34f545</h1>
+      <MetaData title="My Orders" />
+      <div className="container container-fluid">
+        <h1 className="mt-5">My Orders</h1>
+        {loading ? (
+          <Loader />
+        ) : (
+          <MDBDataTable 
+            data={setOrders()}
+            className="px-3"
+            bordered
+            striped
+            hover
 
-            <h4 class="mb-4">Shipping Info</h4>
-            <p>
-              <b>Name:</b> John
-            </p>
-            <p>
-              <b>Phone:</b> 111 111 1111
-            </p>
-            <p class="mb-4">
-              <b>Address:</b>Address of user
-            </p>
-            <p>
-              <b>Amount:</b> $1111
-            </p>
-
-            <hr />
-
-            <h4 class="my-4">Payment</h4>
-            <p class="greenColor">
-              <b>PAID</b>
-            </p>
-
-            <h4 class="my-4">Order Status:</h4>
-            <p class="greenColor">
-              <b>Delivered</b>
-            </p>
-
-            <h4 class="my-4">Order Items:</h4>
-
-            <hr />
-            <div class="cart-item my-1">
-              <div class="row my-5">
-                <div class="col-4 col-lg-2">
-                  <img src="" alt="Laptop" height="45" width="65" />
-                </div>
-
-                <div class="col-5 col-lg-5">
-                  <a href="#">Mic</a>
-                </div>
-
-                <div class="col-4 col-lg-2 mt-4 mt-lg-0">
-                  <p>$33</p>
-                </div>
-
-                <div class="col-4 col-lg-3 mt-4 mt-lg-0">
-                  <p>2 Piece(s)</p>
-                </div>
-              </div>
-            </div>
-            <hr />
-          </div>
-        </div>
+          />
+        )}
       </div>
     </Fragment>
-  );
-};
+  )
+}
 
-export default Orders;
+export default ListOrders

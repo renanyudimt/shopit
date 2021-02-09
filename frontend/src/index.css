@@ -638,3 +638,14 @@ ul.CTAs a {
 .is-align-center {
   align-items: center;
 }
+
+.review-card {
+  position: relative;
+}
+
+.review-card .delete-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+}

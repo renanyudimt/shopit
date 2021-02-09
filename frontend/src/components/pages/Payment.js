@@ -95,10 +95,20 @@ const Payment = () => {
         document.querySelector("#pay_btn").disabled = false
       } else {
         if (result.paymentIntent.status === "succeeded") {
+          const orderItems = products.map(item => (
+            {
+              quantity: item.cartQuantity,
+              name: item.name,
+              image: item.images[0].url,
+              price: item.price,
+              product: item._id
+            }
+          ))
+          
           const order = {
             shippingInfo,
             user: user._id,
-            orderItems: cartItems,
+            orderItems,
             paymentInfo: {
               id: result.paymentIntent.id,
               status: result.paymentIntent.status
@@ -106,7 +116,6 @@ const Payment = () => {
             taxPrice,
             shippingPrice,
             totalPrice,
-            orderStatus: "Paid",
             paidAt: Date.now(),
             createdAt: Date.now()
           }

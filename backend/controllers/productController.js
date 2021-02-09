@@ -41,7 +41,11 @@ exports.getProducts = catchAsyncErrors(async(req, res, next) => {
 
 //Get specific product => api/vi/product:id
 exports.getProduct = catchAsyncErrors(async(req, res, next) => {
-  const product = await Product.findById(req.params.id)
+  const product = await Product.findById(req.params.id) 
+  .populate({
+    path: 'reviews.user',
+    select:["_id", 'name'],
+  })
   
   if (!product) {
     return next(new ErrorHandler("Product not found", 404))
@@ -99,8 +103,9 @@ exports.createProductReview = catchAsyncErrors(async(req, res, next) => {
   const product = await Product.findById(productId);
 
   const isReviewed = product.reviews.find(
-    review => review.user.toString == req.user._id.toString()
+    review => review.user.toString() == req.user._id.toString()
   )
+
 
   if (isReviewed) {
     //atualiza o ja existente
@@ -129,7 +134,11 @@ exports.createProductReview = catchAsyncErrors(async(req, res, next) => {
 //Get All reviews of a product => /api/v1/reviews
 exports.getProductReviews = catchAsyncErrors(async(req, res, next) => {
   const product = await Product.findById(req.query.id)
-    .populate("reviews.user", "name image")
+    .populate({
+      path: 'reviews.user',
+      model: 'User',
+      select:['name'],
+    })
 
   res.status(200).json({
     success: true,
@@ -139,16 +148,21 @@ exports.getProductReviews = catchAsyncErrors(async(req, res, next) => {
 
 //Delete review of a product => /api/v1/reviews
 exports.deleteReview = catchAsyncErrors(async(req, res, next) => {
-  const product = await Product.findById(req.query.productId)
-    .populate("reviews.user", "name image")
+  const product = await Product.find({
+    "id" : req.query.id, 
+    "reviews.user": req.user.id
+  })
 
+  if (product.length == 0) {
+    return next(new ErrorHandler("You can't delete a reviews that doesn't belongs to you", 400))
+  }
   
-  const reviews = product.reviews.filter(review => review._id.toString() != req.query.reviewId.toString())
+  const reviews = product[0].reviews.filter(review => review._id.toString() != req.query.reviewId.toString())
   //ao inves de remover a que eu quero, vou separa uma array com todas as reviews que nao tem o id igual ao da query, ou seja trazer todas menos ela e salvar
 
   const numberOfReviews = reviews.length
 
-  const ratings = product.reviews.reduce((acc, item) => item.rating + acc, 0)/reviews.length;
+  const ratings = product[0].reviews.reduce((acc, item) => item.rating + acc, 0)/reviews.length;
 
 
   await Product.findByIdAndUpdate(req.query.productId, {
@@ -176,6 +190,16 @@ exports.getCartProducts = catchAsyncErrors(async(req, res, next) => {
     }
   })
 
+  res.status(200).json({
+    success: true,
+    products
+  })
+})
+
+
+//get all products info to Admin => api/v1/admin/products
+exports.getAdminProducts = catchAsyncErrors(async (req, res, next) => {
+  const products = await Product.find()
   res.status(200).json({
     success: true,
     products

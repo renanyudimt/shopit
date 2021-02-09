@@ -7,7 +7,6 @@ const CheckoutSteps = ({ shipping, confirmOrder, payment }) => {
   
   function handleClick (e, route) {
     e.preventDefault()
-    console.log(route)
     history.push(`/${route}`, [{ authorization: true }])
 
   }

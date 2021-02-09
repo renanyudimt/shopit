@@ -14,7 +14,7 @@ const {
 router.route("/order/new").post(isAuthenticatedUser, createOrder)
 
 router.route("/order/:id").get(isAuthenticatedUser, getOrder)
-router.route("/orders/").get(isAuthenticatedUser, getOrders)
+router.route("/orders").get(isAuthenticatedUser, getOrders)
 
 router.route("/admin/orders").get(isAuthenticatedUser, authorizedRoles("admin"), getAllOrders);
 router.route("/admin/order/:id")

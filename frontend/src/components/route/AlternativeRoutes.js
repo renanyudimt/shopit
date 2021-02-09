@@ -2,15 +2,18 @@ import React, { Fragment } from 'react'
 import { Route, Redirect, useLocation  } from "react-router-dom"
 import { useSelector } from "react-redux"
 
-export const LoggedRoute = ({ component: Component, ...rest }) => {
-  const { isAuthenticated, loading } = useSelector(state => state.userReducer)
-  console.log("logged route")
+export const LoggedRoute = ({isAdmin, component: Component, ...rest }) => {
+  const { isAuthenticated, loading, user } = useSelector(state => state.userReducer)
   return (
     <Fragment>
       {!loading && (
         <Route {...rest} render={props => {
           if (isAuthenticated === false) {
             return <Redirect to='/login' />
+          }
+
+          if (isAdmin === true && user.role !== "admin") {
+            return <Redirect to='/' />
           }
 
           return <Component {...rest } />
@@ -25,7 +28,6 @@ export const CheckoutRoute = ({ component: Component, ...rest }) => {
 
   //authorization to enter this page
   const authorization = location.state ? location.state.map(item => (item.authorization))[0] : false ;
-  console.log("authorization", authorization)
   return (  
     <Fragment>
       <Route {...rest } render={ routeProps => (
