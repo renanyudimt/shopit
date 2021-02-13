@@ -13,7 +13,14 @@ import {
   NEW_REVIEW_CLEAR,
   DELETE_REVIEW_REQUEST,
   DELETE_REVIEW_SUCCESS,
-  DELETE_REVIEW_FAIL
+  DELETE_REVIEW_FAIL,
+  ADMIN_PRODUCTS_REQUEST,
+  ADMIN_PRODUCTS_SUCCESS,
+  ADMIN_PRODUCTS_FAIL,
+  NEW_PRODUCT_REQUEST,
+  NEW_PRODUCT_SUCCESS,
+  NEW_PRODUCT_FAIL
+
 } from "./../constants/productConstants"
 
 export const getProducts = (currentPage, keyword, price, category, rating) => async (dispatch) => {
@@ -106,6 +113,87 @@ export const deleteReview = (productId, reviewId) => async (dispatch) => {
     })
   }
 } 
+
+export const getAdminProducts = () => async (dispatch) => {
+  try {
+
+    dispatch({
+      type: ADMIN_PRODUCTS_REQUEST
+    })
+
+    const config = {
+      withCredentials: true
+    }
+
+    const { data } = await axios.get("http://localhost:4000/api/v1/admin/products", config)
+
+    dispatch({
+      type: ADMIN_PRODUCTS_SUCCESS,
+      payload: data.products
+    })
+
+  } catch(error) {
+    dispatch({
+      type: ADMIN_PRODUCTS_FAIL,
+      paylaod: error.response.data.errorMessage
+    })
+  }
+}
+
+export const getAdminProductsOutOfStock = () => async (dispatch) => {
+  try {
+
+    dispatch({
+      type: ADMIN_PRODUCTS_REQUEST
+    })
+
+    const config = {
+      withCredentials: true
+    }
+
+    const { data } = await axios.get("http://localhost:4000/api/v1/admin/products/outofstock", config)
+
+    dispatch({
+      type: ADMIN_PRODUCTS_SUCCESS,
+      payload: data.products
+    })
+
+  } catch(error) {
+    dispatch({
+      type: ADMIN_PRODUCTS_FAIL,
+      paylaod: error.response.data.errorMessage
+    })
+  }
+}
+
+export const newProduct = (productData) => async (dispatch) => {
+  try {
+    dispatch({
+      type: NEW_PRODUCT_REQUEST
+    })
+
+    const config = {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }
+
+    const { data } = await axios.post("http://localhost:4000/api/v1/admin/product/new", productData, config)
+    dispatch({
+      type: NEW_PRODUCT_SUCCESS,
+      payload: data.success
+    })
+
+  } catch(error) {
+    console.log(error.response.data)
+
+  dispatch({
+      type: NEW_PRODUCT_FAIL,
+      payload: error.response.data.errorMessage
+    })
+  }
+}
 
 export const resetNewReview = () => async(dispatch) => {
   dispatch({

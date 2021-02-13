@@ -3,8 +3,17 @@ import { Link } from "react-router-dom";
 import MetaData from "./../layout/MetaData";
 import Loader from "./../layout/Loader";
 import Sidebar from "./../admin/Sidebar";
+import { getDashboardInfo } from "./../../actions/adminActions"
+import { useDispatch, useSelector } from "react-redux";
 
 export const Dashboard = () => {
+  const dispatch = useDispatch()
+
+  const { loading, amount, products, orders, users, outOfStock } = useSelector(state => state.dashboardReducer)
+  useEffect(() => {
+    dispatch(getDashboardInfo())
+  }, [])
+
   return (
     <Fragment>
       <div className="row">
@@ -20,7 +29,7 @@ export const Dashboard = () => {
                 <div className="card-body">
                   <div className="text-center card-font-size">
                     Total Amount
-                    <br /> <b>$4567</b>
+                    <br /> <b>${amount ? amount : 0 }</b>
                   </div>
                 </div>
               </div>
@@ -33,7 +42,7 @@ export const Dashboard = () => {
                 <div className="card-body">
                   <div className="text-center card-font-size">
                     Products
-                    <br /> <b>56</b>
+                    <br /> <b>{ products ? products : 0 }</b>
                   </div>
                 </div>
                 <Link className="card-footer text-white clearfix small z-1" to="/admin/products">
@@ -50,7 +59,7 @@ export const Dashboard = () => {
                 <div className="card-body">
                   <div className="text-center card-font-size">
                     Orders
-                    <br /> <b>125</b>
+                    <br /> <b>{ orders ? orders : 0 }</b>
                   </div>
                 </div>
                 <Link className="card-footer text-white clearfix small z-1" to="/admin/orders" >
@@ -67,7 +76,7 @@ export const Dashboard = () => {
                 <div className="card-body">
                   <div className="text-center card-font-size">
                     Users
-                    <br /> <b>45</b>
+                    <br /> <b>{ users ? users : 0}</b>
                   </div>
                 </div>
                 <Link className="card-footer text-white clearfix small z-1" to="/admin/users">
@@ -84,9 +93,15 @@ export const Dashboard = () => {
                 <div className="card-body">
                   <div className="text-center card-font-size">
                     Out of Stock
-                    <br /> <b>4</b>
+                    <br /> <b>{ outOfStock ? outOfStock : 0}</b>
                   </div>
                 </div>
+                <Link className="card-footer text-white clearfix small z-1" to="/admin/products/outofstock">
+                  <span className="float-left">View Details</span>
+                  <span className="float-right">
+                    <i className="fa fa-angle-right"></i>
+                  </span>
+                </Link>
               </div>
             </div>
           </div>

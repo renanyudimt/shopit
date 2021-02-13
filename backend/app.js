@@ -32,11 +32,13 @@ const products = require('./routes/product');
 const user = require('./routes/user');
 const orders = require('./routes/order');
 const payment = require('./routes/payment')
+const dashboard = require("./routes/dashboard")
 
 app.use('/api/v1', products);
 app.use('/api/v1', user);
 app.use('/api/v1', orders);
 app.use('/api/v1', payment)
+app.use('/api/v1', dashboard)
 
 //Middleware to handle errors
 app.use(errorMiddleware)

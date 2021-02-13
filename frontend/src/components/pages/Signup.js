@@ -25,8 +25,7 @@ const Register = ({ history }) => {
     "/images/default_preview_avatar.png"
   );
 
-  //tentar fazer essa tela sem ajuda de ngm, vai ser bom, so na hora do cloudinary que vai precisar.
-
+  //ver qual a melhor forma de guardar imagem, se o cloudinary e bom mesmo ou salvar em base64 e melhor.
   useEffect(() => {
     if (isAuthenticated) {
       history.push("/");

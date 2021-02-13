@@ -11,7 +11,8 @@ const {
   getProductReviews,
   deleteReview,
   getCartProducts,
-  getAdminProducts
+  getAdminProducts,
+  getAdminProductsOutOfStock
 } = require("../controllers/productController");
 
 const { isAuthenticatedUser, authorizedRoles } = require("./../middlewares/auth")
@@ -21,7 +22,7 @@ router.route('/product/:id').get(getProduct)
 
 router.route('/admin/product/new').post(isAuthenticatedUser, authorizedRoles('admin'), newProduct)
 router.route('/admin/products').get(isAuthenticatedUser, authorizedRoles('admin'), getAdminProducts)
-
+router.route('/admin/products/outofstock').get(isAuthenticatedUser, authorizedRoles('admin'), getAdminProductsOutOfStock)
 router.route('/admin/product/:id')
   .put(isAuthenticatedUser, authorizedRoles('admin'), updateProduct)
   .delete(isAuthenticatedUser, authorizedRoles('admin'), deleteProduct)

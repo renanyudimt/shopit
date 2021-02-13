@@ -22,6 +22,9 @@ import Orders from "./components/pages/Orders"
 
 //Admin pages
 import Dashboard from "./components/pages/admin-Dashboard"
+import AdminProducts from "./components/pages/admin-Products"
+import AdminPrdOutOfStock from "./components/pages/admin-outOfStock"
+import CreateProduct from "./components/pages/admin-NewProduct"
 
 import { LoggedRoute, NotLoggedRoute, CheckoutRoute } from "./components/route/AlternativeRoutes"
 
@@ -71,8 +74,12 @@ function App() {
         <CheckoutRoute path="/success" component={Success} exact/>
         <LoggedRoute path="/order/:id" component={Order} exact />
         <LoggedRoute path="/orders" component={Orders} exact />
-
+        
+        {/* Admin routes */}
         <LoggedRoute path="/dashboard" isAdmin={true} component={Dashboard} exact />
+        <LoggedRoute path="/admin/products" isAdmin={true} component={AdminProducts} exact />
+        <LoggedRoute path="/admin/products/outofstock" isAdmin={true} component={AdminPrdOutOfStock} exact />
+        <LoggedRoute path="/admin/products/new" isAdmin={true} component={CreateProduct} exact />
 
         <Footer />
       </div>
